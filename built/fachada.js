@@ -12,17 +12,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, Promi
     });
 };
 var pgLib = require('./pgLib');
-var Op1 = require('./Operacion');
-// en este fichero de hacen los import dinámicamente 
-// a partir de los fichero que haya en el directorio 
-// bdd ====> NO ESTA HECHO TODAVIA
+var fs = require('fs');
+// array de modulos
 exports.arrOp = {};
-exports.refresh = (nombre, fc) => {
-    exports.arrOp[nombre] = fc;
-};
-// array con todas las operaciones
-exports.arrOp = {
-    "Operacion_f1": Op1.f1
+// operación para la carga de los modulos
+// esta operación se realiza de manera sincrona
+var files = fs.readdirSync("built/Operaciones");
+var f = files.filter(i => i.endsWith(".js"));
+console.log("fichero", f);
+f.forEach(i => { exports.arrOp[i] = require(`./Operaciones/${i}`); });
+exports.refresh = (modulo, nombre) => {
+    exports.arrOp[nombre] = require(nombre);
 };
 function runQuery(query, bddConnection, params) {
     return __awaiter(this, void 0, Promise, function* () {
@@ -53,14 +53,14 @@ exports.runQuery = runQuery;
 // funcion llamada a una funcion 
 // bddConnection Cadenas de conexión
 // params : los parametros que devuelve
-function run(funcion, bddConnection, params) {
+function run(modulo, funcion, bddConnection, params) {
     return __awaiter(this, void 0, Promise, function* () {
         var conectado = 0;
         try {
             var cliente = yield pgLib.conn(bddConnection);
             conectado = 1;
             yield pgLib.q(cliente, "BEGIN", []);
-            var r = yield exports.arrOp[funcion](cliente, params);
+            var r = yield exports.arrOp[modulo][funcion](cliente, params);
             yield pgLib.q(cliente, "COMMIT ", []);
             cliente.end();
             return r;
@@ -77,3 +77,4 @@ function run(funcion, bddConnection, params) {
     });
 }
 exports.run = run;
+//# sourceMappingURL=fachada.js.map

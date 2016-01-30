@@ -36,3 +36,4 @@ exports.q = (client, select, params) => __awaiter(this, void 0, Promise, functio
     });
     return p;
 });
+//# sourceMappingURL=pgLib.js.map

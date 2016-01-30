@@ -9,13 +9,18 @@ async function  handleRequest(request, response){
         response.write(JSON.stringify(i.rows));
     });
     
-   await runBdd.run("Operacion_f1","local",[]).then(i=>{
+   await runBdd.run("opera.js","f3","local",[]).then(i=>{
        response.end(JSON.stringify(i[0].rows));    
    });
 }
 
-var server = http.createServer(handleRequest);
-var PORT = 3000;
-server.listen(PORT, function(){
-    console.log("Server listening   on: http://localhost:%s", PORT);
-});
+async function createServer()
+{
+    var server = http.createServer(handleRequest);
+    var PORT = 3000;
+    server.listen(PORT, function(){
+        console.log("Server listening   on: http://localhost:%s", PORT);
+    });    
+}
+
+createServer();

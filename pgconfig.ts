@@ -15,15 +15,6 @@ import * as pg from 'pg';
 // en este fichero meteremos las diferentes 
 // parámetros de configuración para las
 // diferentes bases de datos
-var heroku:pg.ConnectionConfig = 
-{
-        user: "tzojnunoezgiml",
-        password: "ORGE-1YfRVGURRVnQ4klTxWNij",
-        database: "dlumuqapja3ep",
-        port: 5432,
-        host: "ec2-54-235-152-114.compute-1.amazonaws.com",
-        ssl: true
-};
 
 var local:pg.ConnectionConfig = 
 {
@@ -35,6 +26,6 @@ var local:pg.ConnectionConfig =
         ssl: true
 };
 export var pgConfig = {
-    "heroku": heroku,
+
     "local":local
 }

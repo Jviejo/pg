@@ -11,14 +11,6 @@
 // en este fichero meteremos las diferentes 
 // parámetros de configuración para las
 // diferentes bases de datos
-var heroku = {
-    user: "tzojnunoezgiml",
-    password: "ORGE-1YfRVGURRVnQ4klTxWNij",
-    database: "dlumuqapja3ep",
-    port: 5432,
-    host: "ec2-54-235-152-114.compute-1.amazonaws.com",
-    ssl: true
-};
 var local = {
     user: "postgres",
     password: "postgres",
@@ -28,6 +20,6 @@ var local = {
     ssl: true
 };
 exports.pgConfig = {
-    "heroku": heroku,
     "local": local
 };
+//# sourceMappingURL=pgConfig.js.map

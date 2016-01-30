@@ -21,13 +21,19 @@ function handleRequest(request, response) {
             .then(i => {
             response.write(JSON.stringify(i.rows));
         });
-        yield runBdd.run("Operacion_f1", "local", []).then(i => {
+        yield runBdd.run("opera.js", "f3", "local", []).then(i => {
             response.end(JSON.stringify(i[0].rows));
         });
     });
 }
-var server = http.createServer(handleRequest);
-var PORT = 3000;
-server.listen(PORT, function () {
-    console.log("Server listening   on: http://localhost:%s", PORT);
-});
+function createServer() {
+    return __awaiter(this, void 0, Promise, function* () {
+        var server = http.createServer(handleRequest);
+        var PORT = 3000;
+        server.listen(PORT, function () {
+            console.log("Server listening   on: http://localhost:%s", PORT);
+        });
+    });
+}
+createServer();
+//# sourceMappingURL=test1.js.map
