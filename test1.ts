@@ -1,7 +1,7 @@
 import * as runBdd from './fachada';
 import * as http from 'http';
 
-
+// funcion para probar
 async function  handleRequest(request, response){
    response.setHeader('Content-Type', 'application/json');
    await runBdd.runQuery("select count(*) contador from p_persona ","local",[])
