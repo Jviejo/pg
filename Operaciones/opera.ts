@@ -1,3 +1,4 @@
+
 import * as pgLib from '../pgLib';
 
 export var f1 = async  (cliente,params) =>
@@ -20,6 +21,23 @@ export var f2 = async  (cliente,params) =>
     return r;
 }
 
+export var genera = async (cliente, params) =>
+{
+    // timestamp without time
+    //character varying, integer, numeric
+    var r = await pgLib.q(cliente,`
+                    SELECT table_name,column_name,ordinal_position,is_nullable,data_type,character_maximum_length,numeric_precision,numeric_precision_radix,numeric_scale
+                    FROM information_schema.columns
+                    WHERE table_schema = 'public';
+                   `,[]);
+                                                
+    var r1 = r.rows
+            .map(i=>{
+                    return i}
+                );
+   
+    return r1;                         
+}
 
 export var f3 = async  (cliente,params) =>
 {

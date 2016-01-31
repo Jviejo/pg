@@ -17,13 +17,10 @@ var http = require('http');
 function handleRequest(request, response) {
     return __awaiter(this, void 0, Promise, function* () {
         response.setHeader('Content-Type', 'application/json');
-        yield runBdd.runQuery("select count(*) contador from p_persona ", "local", [])
-            .then(i => {
-            response.write(JSON.stringify(i.rows));
-        });
-        yield runBdd.run("opera.js", "f3", "local", []).then(i => {
-            response.end(JSON.stringify(i[0].rows));
-        });
+        yield runBdd.run("opera.js", "genera", "local", []).then(i => {
+            console.log("numero", i.length);
+            response.end(JSON.stringify(i));
+        }).catch(e => { response.end(e); });
     });
 }
 function createServer() {

@@ -4,14 +4,13 @@ import * as http from 'http';
 // funcion para probar
 async function  handleRequest(request, response){
    response.setHeader('Content-Type', 'application/json');
-   await runBdd.runQuery("select count(*) contador from p_persona ","local",[])
-    .then(i=>{ 
-        response.write(JSON.stringify(i.rows));
-    });
+  
     
-   await runBdd.run("opera.js","f3","local",[]).then(i=>{
-       response.end(JSON.stringify(i[0].rows));    
-   });
+   await runBdd.run("opera.js","genera","local",[]).then(i=>{
+       console.log("numero",i.length);
+       response.end(JSON.stringify(i));    
+   }).catch(e => {response.end(e);})
+   ;
 }
 
 async function createServer()

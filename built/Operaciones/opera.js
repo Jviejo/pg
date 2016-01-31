@@ -28,6 +28,20 @@ exports.f2 = (cliente, params) => __awaiter(this, void 0, Promise, function* () 
     r.push(yield pgLib.q(cliente, "select count(*) c1 from p_persona;select count(*) contador2 from p_persona", []));
     return r;
 });
+exports.genera = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
+    // timestamp without time
+    //character varying, integer, numeric
+    var r = yield pgLib.q(cliente, `
+                    SELECT table_name,column_name,ordinal_position,is_nullable,data_type,character_maximum_length,numeric_precision,numeric_precision_radix,numeric_scale
+                    FROM information_schema.columns
+                    WHERE table_schema = 'public';
+                   `, []);
+    var r1 = r.rows
+        .map(i => {
+        return i;
+    });
+    return r1;
+});
 exports.f3 = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
     var r = [];
     // diferenets accesos a las tablas

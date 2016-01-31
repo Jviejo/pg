@@ -20,7 +20,8 @@ var local:pg.ConnectionConfig =
 {
         user: "postgres",
         password: "postgres",
-        database: "gt",
+        database: "gt",  
+        
         port: 5432,
         host: "192.168.1.50",
         ssl: true
