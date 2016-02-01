@@ -8,25 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const runBdd = require('./fachada');
-const http = require('http');
 // funcion para probar
-function handleRequest(request, response) {
+function exec() {
     return __awaiter(this, void 0, void 0, function* () {
-        response.setHeader('Content-Type', 'application/json');
         yield runBdd.run("opera.js", "generaInsert", "local", []).then(i => {
-            console.log("numero", i.length);
-            response.end(JSON.stringify(i));
-        }).catch(e => { response.end(e); });
+            // generación de insert table (nombres de campos separados por ,) values ($1,$2,$3,....)
+            console.log("resultado", i);
+        }).catch(e => { console.log(e); });
+        console.log("despues del await");
     });
 }
-function createServer() {
-    return __awaiter(this, void 0, void 0, function* () {
-        var server = http.createServer(handleRequest);
-        var PORT = 3000;
-        server.listen(PORT, function () {
-            console.log("Server listening   on: http://localhost:%s", PORT);
-        });
-    });
-}
-createServer();
-//# sourceMappingURL=test1.js.map
+exec();
+//# sourceMappingURL=test2.js.map

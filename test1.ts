@@ -6,7 +6,7 @@ async function  handleRequest(request, response){
    response.setHeader('Content-Type', 'application/json');
   
     
-   await runBdd.run("opera.js","genera","local",[]).then(i=>{
+   await runBdd.run("opera.js","generaInsert","local",[]).then(i=>{
        console.log("numero",i.length);
        response.end(JSON.stringify(i));    
    }).catch(e => {response.end(e);})

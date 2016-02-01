@@ -7,7 +7,7 @@
 			"request": "launch",
 			"program": "node_modules/nodemon/bin/nodemon.js",
 			"stopOnEntry": false,
-			"args": ["built/test1.js"],
+			"args": ["built/test2.js"],
 			"cwd": ".",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
@@ -24,7 +24,7 @@
 			"name": "node",
 			"type":"node",
 			"request": "launch",
-			"program": "built/test1.js",
+			"program": "built/test2.js",
 			"stopOnEntry": false,
 			"args": [],
 			"cwd": ".",

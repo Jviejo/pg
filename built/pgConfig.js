@@ -1,3 +1,4 @@
+"use strict";
 // connection string
 // hay un problema en el tsd ya que no está definido el paraetro ssl en el tsd install pg --save
 //    export interface ConnectionConfig {

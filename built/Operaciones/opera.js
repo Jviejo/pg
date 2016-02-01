@@ -1,18 +1,14 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, Promise, generator) {
-    return new Promise(function (resolve, reject) {
-        generator = generator.call(thisArg, _arguments);
-        function cast(value) { return value instanceof Promise && value.constructor === Promise ? value : new Promise(function (resolve) { resolve(value); }); }
-        function onfulfill(value) { try { step("next", value); } catch (e) { reject(e); } }
-        function onreject(value) { try { step("throw", value); } catch (e) { reject(e); } }
-        function step(verb, value) {
-            var result = generator[verb](value);
-            result.done ? resolve(result.value) : cast(result.value).then(onfulfill, onreject);
-        }
-        step("next", void 0);
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
     });
 };
-var pgLib = require('../pgLib');
-exports.f1 = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
+const pgLib = require('../pgLib');
+exports.f1 = (cliente, params) => __awaiter(this, void 0, void 0, function* () {
     var r = [];
     // diferenets accesos kkka las tablas
     yield pgLib.q(cliente, "insert into p_persona values($1,$2,$3,$4,$5,$6)", [Math.random(), 'a', 'b', 'c', 'd', 'e']);
@@ -20,7 +16,7 @@ exports.f1 = (cliente, params) => __awaiter(this, void 0, Promise, function* () 
     r.push(yield pgLib.q(cliente, "select count(*) c1 from p_persona;select count(*) contador2 from p_persona", []));
     return r;
 });
-exports.f2 = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
+exports.f2 = (cliente, params) => __awaiter(this, void 0, void 0, function* () {
     var r = [];
     // diferenets accesos a las tablas
     yield pgLib.q(cliente, "insert into p_persona values($1,$2,$3,$4,$5,$6)", [Math.random(), 'a', 'b', 'c', 'd', 'e']);
@@ -28,7 +24,23 @@ exports.f2 = (cliente, params) => __awaiter(this, void 0, Promise, function* () 
     r.push(yield pgLib.q(cliente, "select count(*) c1 from p_persona;select count(*) contador2 from p_persona", []));
     return r;
 });
-exports.genera = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
+exports.generaInsert = (cliente, params) => __awaiter(this, void 0, void 0, function* () {
+    var r = yield pgLib.q(cliente, `
+        SELECT table_name,column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public';
+    `, []);
+    var r1 = r.rows.reduce((acc, v) => {
+        if (!acc[v.table_name]) {
+            acc[v.table_name] = [];
+        }
+        acc[v.table_name].push(v.column_name);
+        return acc;
+    }, {});
+    var tablas = Object.keys(r1).forEach((index) => r1[index] = `insert into ${index} (${r1[index]}) values (${r1[index].reduce((acc, v, indice) => { return acc + (indice != 0 ? "," : "") + '$' + (indice + 1); }, "")})`);
+    return r1;
+});
+exports.genera = (cliente, params) => __awaiter(this, void 0, void 0, function* () {
     // timestamp without time
     //character varying, integer, numeric
     var r = yield pgLib.q(cliente, `
@@ -42,7 +54,7 @@ exports.genera = (cliente, params) => __awaiter(this, void 0, Promise, function*
     });
     return r1;
 });
-exports.f3 = (cliente, params) => __awaiter(this, void 0, Promise, function* () {
+exports.f3 = (cliente, params) => __awaiter(this, void 0, void 0, function* () {
     var r = [];
     // diferenets accesos a las tablas
     yield pgLib.q(cliente, "insert into p_persona values($1,$2,$3,$4,$5,$6)", [Math.random(), 'a', 'b', 'c', 'd', 'e']);

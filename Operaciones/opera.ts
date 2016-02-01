@@ -21,6 +21,33 @@ export var f2 = async  (cliente,params) =>
     return r;
 }
 
+export var generaInsert = async (cliente, params) =>
+{
+    var r = await pgLib.q(cliente,
+    `
+        SELECT table_name,column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public';
+    `, []
+    );
+    
+    var r1 = r.rows.reduce((acc,v) =>
+    {
+        if (!acc[v.table_name])
+       {
+         acc[v.table_name] = [];
+       }
+       acc[v.table_name].push(v.column_name); 
+       return acc;
+    }, {}); 
+    var tablas = Object.keys(r1).forEach( (index) =>
+          r1[index] =  `insert into ${index} (${r1[index]}) values (${r1[index].reduce((acc, v, indice) => { return acc + (indice != 0 ?",":"") + '$' + (indice + 1)  },"")})`
+    )
+    
+    
+    return r1;
+}
+
 export var genera = async (cliente, params) =>
 {
     // timestamp without time
