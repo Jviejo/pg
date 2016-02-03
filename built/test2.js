@@ -7,57 +7,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments)).next());
     });
 };
+const runBdd = require('./fachada');
 // nombres de las tablas
 var tablas = {
     p_persona: "p_persona"
 };
 // insert generica
-exports.insert = (tabla, a) => {
+exports.insert = (tabla, database, a) => __awaiter(this, void 0, void 0, function* () {
     var tmp = Object.keys(a).map((i, indice) => "$" + (indice + 1));
     var sql = `insert into ${tabla} (${Object.keys(a)}) values (${tmp})`;
-    //await pgLib.q(cliente,sql, Object.keys(a).map(i=>a[i]));
-    return sql;
-};
-exports.update = (tabla, id, a) => {
-    var tmp = Object.keys(a)
-        .filter(i => i != 'id')
-        .map((i, indice) => `${i} = $${indice + 1} `);
-    var sql = `update ${tabla} set ${tmp}  where id = ${id} `;
-    //await pgLib.q(cliente,sql, [id]);
-    return sql;
-};
-exports.remove = (tabla, id) => {
+    var params = Object.keys(a).map(j => a[j]);
+    return runBdd.runQuery(sql, database, params);
+});
+var setUpdate = (a) => Object.keys(a).map((i, indice) => `${i} = $${indice + 1} `);
+var w = (o, inicial) => Object.keys(o).map((i, indice) => `${i}=$${indice + 1 + inicial}`).join('  and ');
+var params = (a) => Object.keys(a).map(j => a[j]);
+exports.update = (tabla, database, filtro, datos) => __awaiter(this, void 0, void 0, function* () {
+    var sql = `update ${tabla} set ${setUpdate(datos)}  where  ${w(filtro, Object.keys(datos).length)} `;
+    return runBdd.runQuery(sql, database, params(datos).concat(params(filtro)));
+});
+exports.remove = (tabla, database, id) => {
     var sql = `delete from  ${tabla}  where id = $1 `;
-    //await pgLib.q(cliente,sql, [id]);
-    return sql;
+    return runBdd.runQuery(sql, database, [id]);
 };
-exports.select = (tabla, id) => {
+exports.select = (tabla, database, id) => {
     var sql = `select *  from  ${tabla}  where id = $1`;
-    //await pgLib.q(cliente,sql, [id]);
-    return sql;
+    return runBdd.runQuery(sql, database, [id]);
 };
-exports.selectAll = (tabla) => {
+exports.selectAll = (tabla, database) => {
     var sql = `select *  from  ${tabla} `;
-    //await pgLib.q(cliente,sql, []);
-    return sql;
+    return runBdd.runQuery(sql, database, []);
 };
-exports.selectFilter = (tabla, a) => {
-    var sql = `select *  from  ${tabla}  where ${a}`;
-    //await pgLib.q(cliente,sql, []);
-    return sql;
+exports.generaSQL = (texto, params) => {
+    return new Function(params, "return `" + texto + "`;");
 };
-exports.selectFilterPagina = (tabla, a, filter, sortedBy, skip, take) => {
+exports.selectFilter = (tabla, database, a) => {
+    var sql = `select *  from  ${tabla}  where ${w(a, 0)}`;
+    return runBdd.runQuery(sql, database, params(a));
+};
+exports.selectFilterPagina = (tabla, database, datos, sortedBy, skip, take) => {
     var sql = `
             select * from
             (
-            SELECT row_number() over(order by ${sortedBy}) rn, *
-            FROM ${tabla}
-            WHERE ${filter}
+                SELECT row_number() over(order by ${sortedBy}) rn, *
+                FROM ${tabla}
+                WHERE ${w(datos, 0)}
             ) r
             where r.rn between ${skip} and ${skip + take};
         `;
-    //await pgLib.q(cliente,sql, []);
-    return sql;
+    return runBdd.runQuery(sql, database, params(datos));
+};
+// clone objetos simples
+var clone = (origen) => {
+    var tmp = {};
+    Object.keys(origen).map(i => tmp[i] = origen[i]);
+    return tmp;
 };
 // funcion para probar
 function exec() {
@@ -68,16 +72,19 @@ function exec() {
             telefono: "",
             telefono2: "",
             tipopersona: "",
-            id: "1",
+            id: "aa" + Math.random()
         };
-        console.log("insertar", exports.insert(tablas.p_persona, prueba));
-        console.log("update", exports.update(tablas.p_persona, '1111', prueba));
-        console.log("delete", exports.remove(tablas.p_persona, '1111'));
-        console.log("select", exports.select(tablas.p_persona, '1'));
-        console.log("selectAll", exports.selectAll(tablas.p_persona));
-        console.log("selectAll", exports.selectFilter(tablas.p_persona, prueba));
-        console.log("selectAll", exports.selectFilterPagina(tablas.p_persona, prueba, "id > '1'", "id", 10, 20));
-        //   await runBdd.run("opera.js","getPersona","local",[]).then(i=>
+        var p1 = clone(prueba);
+        exports.insert("p_persona", "local", p1).then(i => {
+            console.log("insert", i);
+        }).then(i => exports.update("p_persona", "local", { id: prueba.id, telefono: "222" }, prueba).then(i => {
+            console.log("update", i);
+        }))
+            .then(i => { runBdd.select("p_persona", "local", prueba.id).then(i => { console.log("select", i.rows); }); })
+            .then(i => { runBdd.selectAll("p_persona", "local").then(i => { console.log("selectAll", i.rows.length); }); })
+            .then(i => { runBdd.selectFilter("p_persona", "local", { id: "aa0.9668956873938441" }).then(i => { console.log("selectFilter", i.rows); }); })
+            .then(i => { runBdd.selectFilterPagina("p_persona", "local", { id: "aa0.9668956873938441" }, 'telefono', 0, 10).then(i => { console.log("selectFilterPagina", i.rows); }); });
+        //   await runBdd.run("opera.js","getPersona",database,[]).then(i=>
         //   {
         //       var a:Array<bdd.p_persona> = i;
         //       console.log("resultado",a);
