@@ -94,24 +94,26 @@ async function  exec()
         id:"aa"+Math.random()
     };
    
-   var p1 = clone(prueba);
+    var p1 = clone(prueba);
 
-insert("p_persona","local",p1).then(i=>
-{
-  console.log("insert",i);
-}
-).then(i=>
-update("p_persona","local",{id:prueba.id,telefono:"222"},prueba).then(i=>
-{
-  console.log("update",i);
-}
-))
-.then(i=> {runBdd.select("p_persona","local",prueba.id).then(i=>{  console.log("select",i.rows);}) })
-.then(i=> {runBdd.selectAll("p_persona","local").then(i=>{  console.log("selectAll",i.rows.length);}) })
-.then(i=> {runBdd.selectFilter("p_persona","local",{id:"aa0.9668956873938441"}).then(i=>{  console.log("selectFilter",i.rows);}) })
-.then(i=> {runBdd.selectFilterPagina("p_persona","local",{id:"aa0.9668956873938441"},'telefono',0,10).then(i=>{  console.log("selectFilterPagina",i.rows);}) })
-;
- 
+
+    var objetos = await runBdd.run("opera.js","generaUnObjetoPorTabla","local",[])
+    var a:bdd.p_persona = objetos.p_persona;
+    a.id = ""+Math.random();
+    a.g_nifnombre="11";
+    a.telefono = "11";
+    a.telefono2 = "12";
+    a.tipopersona = "p1";
+    await runBdd.insert("p_persona","local",a);
+
+    await runBdd.insert("p_persona","local",{id:Math.random()});
+
+    
+    console.log("registro",a);
+    var q = {id:a.id};
+    var registro =   await  runBdd.selectFilter("p_persona","local",q)
+       
+console.log(registro.rows);
         
 //   await runBdd.run("opera.js","getPersona",database,[]).then(i=>
 //   {

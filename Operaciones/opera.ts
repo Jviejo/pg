@@ -33,6 +33,29 @@ var convertPgType = (tipo) =>
            break;
     }
 }
+var initCampo = (tipo):any =>
+{
+    switch (tipo)
+    {
+        case "character varying":
+           return "";
+           break;
+        case "numeric":
+           return 0;
+           break;
+
+        case "integer":
+           return 0
+           break;
+
+        case "json":
+           return null;
+           break;
+        case "timestamp without time zone": 
+           return new Date();
+           break;
+    }
+}
 var agrupar = (array, agrupaPor) =>
 {
     var r1 = array.rows.reduce((acc,v) =>
@@ -69,6 +92,27 @@ export var generaInterface = async (cliente, params) =>
     });
     return r2.join(' ');
 };
+
+export var generaUnObjetoPorTabla = async (cliente, params) =>
+{
+
+    var r = await pgLib.q(cliente,
+    `
+        SELECT table_name,column_name,data_type,ordinal_position
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+        order by ordinal_position;
+    `, []
+    );
+    var r1 = agrupar(r,"table_name");
+    var r2 = {};
+    Object.keys(r1).forEach(i=> 
+    {
+       r2[i] = r1[i].reduce((acc,v) => { acc[v.column_name] = initCampo(v.data_type); return acc},{}); 
+    });
+    return r2;
+};
+
 
 export var generaInsert = async (cliente, params) =>
 {

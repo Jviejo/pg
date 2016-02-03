@@ -11,6 +11,7 @@ var f = files.filter(i=> i.endsWith(".js"))
 console.log("fichero", f);
 f.forEach(i=>{arrOp[i] = require(`./Operaciones/${i}`)});
 
+// genera un objeto por tabla
 
 
 export var  insert = async (tabla:string, database:string, a) =>
@@ -96,7 +97,7 @@ export async function runQuery(query:string,bddConnection:string, params:any)
         var cliente = await pgLib.conn(bddConnection);
         conectado = 1;
         await pgLib.q(cliente,"BEGIN",[]);
-        console.log(query);
+        console.log(query,params);
         var r =  await pgLib.q(cliente, query,params);
         await pgLib.q(cliente,"COMMIT ",[]);
         cliente.end();
